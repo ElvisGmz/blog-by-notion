@@ -10,12 +10,15 @@ import styles from './tailwind.css';
 
 export const meta = () => ({
   charset: 'utf-8',
-  title: 'New Remix App',
+  title: 'ElvisGmz | Blog',
   viewport: 'width=device-width,initial-scale=1',
 });
 
 export const links = () => [
   { rel: 'stylesheet', href: styles },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOriginIsolated: true },
+  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap' },
 ];
 
 export default function App() {
@@ -25,7 +28,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="font-quicksand">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
