@@ -41,7 +41,7 @@ export default function Slug() {
             {postProperties?.icon?.emoji}
           </span>
           <span>
-            <h1 className="absolute bottom-12 left-0 px-4 md:px-8 z-10 text-5xl md:text-7xl text-white font-bold">
+            <h1 className="absolute bottom-12 left-0 px-4 md:px-8 z-10 text-4xl md:text-7xl text-white font-bold whitespace-pre-line">
               {postProperties?.properties?.Name?.title?.map(
                 (titlePart) => titlePart?.text.content,
               )}

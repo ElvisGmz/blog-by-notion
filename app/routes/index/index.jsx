@@ -42,7 +42,7 @@ export default function Index() {
                     (titlePart) => titlePart?.text.content,
                   )}
                 </h5>
-                <p className="text-gray-700 leading-6">
+                <p className="text-gray-700 leading-6 text-sm">
                   {properties?.description?.rich_text?.map(
                     (titlePart) => titlePart?.plain_text,
                   )}
