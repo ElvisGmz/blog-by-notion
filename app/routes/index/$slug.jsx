@@ -1,29 +1,43 @@
-import { json } from '@remix-run/node';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import { useLoaderData, Link } from '@remix-run/react';
 import { marked } from 'marked';
+import { useEffect } from 'react';
+import Prism from 'prismjs';
+
+const getPostProperties = async (notionInstance, postID) => {
+  const postProperties = await notionInstance.pages.retrieve({ page_id: postID });
+  return postProperties;
+};
+
+const getPostContent = async (notionInstance, postID) => {
+  // passing notion client to the option
+  const n2m = new NotionToMarkdown({ notionClient: notionInstance });
+
+  const mdblocks = await n2m.pageToMarkdown(postID);
+  const mdString = n2m.toMarkdownString(mdblocks);
+  const postContent = marked(mdString);
+  return postContent;
+};
 
 export const loader = async ({ params }) => {
   const notion = new Client({
     auth: process.env.TOKEN,
   });
-
-  // passing notion client to the option
-  const n2m = new NotionToMarkdown({ notionClient: notion });
-
   const postID = params.slug;
 
-  const postProperties = await notion.pages.retrieve({ page_id: postID });
-
-  const mdblocks = await n2m.pageToMarkdown(postID);
-  const mdString = n2m.toMarkdownString(mdblocks);
-  const html = marked(mdString);
-
-  return json({ postProperties, postContent: html });
+  return {
+    postProperties: await getPostProperties(notion, postID),
+    postContent: await getPostContent(notion, postID),
+  };
 };
 
 export default function Slug() {
+  useEffect(() => {
+    window.Prism = window.Prism || {};
+    Prism.highlightAll();
+  }, []);
+
   const { postProperties, postContent } = useLoaderData();
 
   return (
@@ -41,7 +55,7 @@ export default function Slug() {
             {postProperties?.icon?.emoji}
           </span>
           <span>
-            <h1 className="absolute bottom-12 left-0 px-4 md:px-8 z-10 text-5xl md:text-7xl text-white font-bold">
+            <h1 className="absolute bottom-12 left-0 px-4 md:px-8 z-10 text-4xl md:text-7xl text-white font-bold whitespace-pre-line">
               {postProperties?.properties?.Name?.title?.map(
                 (titlePart) => titlePart?.text.content,
               )}

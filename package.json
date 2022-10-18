@@ -20,6 +20,7 @@
     "@vercel/node": "^2.4.4",
     "marked": "^4.1.1",
     "notion-to-md": "^2.5.5",
+    "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
