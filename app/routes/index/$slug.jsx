@@ -20,15 +20,54 @@ const getPostContent = async (notionInstance, postID) => {
   return postContent;
 };
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   const notion = new Client({
     auth: process.env.TOKEN,
   });
   const postID = params.slug;
 
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
+
   return {
     postProperties: await getPostProperties(notion, postID),
     postContent: await getPostContent(notion, postID),
+    baseUrl,
+  };
+};
+
+export const meta = ({ data }) => {
+  if (!data?.postProperties) {
+    return {
+      title: 'Blog Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  const { postProperties, baseUrl } = data;
+  const title = postProperties?.properties?.Name?.title?.map(
+    (titlePart) => titlePart?.text?.content,
+  ).join('') || 'Blog Post';
+
+  const description = postProperties?.properties?.description?.rich_text?.map(
+    (descPart) => descPart?.plain_text,
+  ).join('') || '';
+
+  const image = postProperties?.cover?.external?.url || '';
+  const url = `${baseUrl}/${postProperties.id}`;
+
+  return {
+    title: `${title} | ElvisGmz Blog`,
+    description,
+    'og:type': 'article',
+    'og:title': title,
+    'og:description': description,
+    'og:image': image,
+    'og:url': url,
+    'twitter:card': 'summary_large_image',
+    'twitter:title': title,
+    'twitter:description': description,
+    'twitter:image': image,
   };
 };
 
